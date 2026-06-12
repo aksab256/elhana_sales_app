@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "451653870452",
+    "project_id": "evn-erp",
+    "storage_bucket": "evn-erp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451653870452:android:182a70307b70956500c221",
+        "android_client_info": {
+          "package_name": "com.elhana_sales"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqIP4-1g_pRyHZLRcn5X9nyb0R2V8lSYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
