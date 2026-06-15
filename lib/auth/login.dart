@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../screens/dashboard.dart'; // تم تعديل المسار الاحترافي هنا صراحة ليقرأ من مجلد screens
 
 class LoginPage extends StatefulWidget {
   final bool isFirebaseReady;
@@ -22,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!widget.isFirebaseReady) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('خطأ: الفايربيس غير متصل حالياً، يرجى التحقق من الملفات والاتصال أولاً.'),
+          content: Text('خطأ: الفايربيس غير متصل حالياً، يرجى التحقق من الاتصال.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -40,14 +41,12 @@ class _LoginPageState extends State<LoginPage> {
     try {
       DocumentSnapshot? empDoc;
 
-      // 1. البحث الصريح عن طريق كود المستند (Document ID)
       final docRef = FirebaseFirestore.instance.collection('employees').doc(userInput);
       final docSnap = await docRef.get();
 
       if (docSnap.exists) {
         empDoc = docSnap;
       } else {
-        // 2. البحث عبر البريد الإلكتروني (email) كبديل مرن
         final querySnap = await FirebaseFirestore.instance
             .collection('employees')
             .where('email', isEqualTo: userInput)
@@ -118,23 +117,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F5F9),
+      backgroundColor: const Color(0xFF0F172A),
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: const BoxConstraints(maxWidth: 460),
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              )
-            ],
+            color: const Color(0xFF1E293B),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF334155)),
           ),
           child: SingleChildScrollView(
             child: Form(
@@ -145,49 +137,51 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Center(
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB).withOpacity(0.1),
+                        color: const Color(0xFF3B82F6).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.account_balance_wallet_rounded, color: Color(0xFF2563EB), size: 40),
+                      child: const Icon(Icons.insights_rounded, color: Color(0xFF3B82F6), size: 44),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   const Center(
                     child: Text(
-                      'تسجيل دخول المندوب',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                      'بوابة المندوب البيعية',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 8),
                   const Center(
                     child: Text(
-                      'أدخل كود الحساب الصريح للوصول إلى المحفظة والمبيعات',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
-                      textAlign: TextAlign.center, // تم تعديلها هنا وإصلاح الخطأ تماماً
+                      'نظام التتبع المالي والميداني المباشر',
+                      style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
                   
                   const Text(
-                    'كود الحساب أو البريد الإلكتروني',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF334155)),
+                    'كود حساب المندوب أو البريد الإلكتروني',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFCBD5E1)),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _identifierController,
+                    style: const TextStyle(color: Colors.white),
                     textDirection: TextDirection.ltr,
                     decoration: InputDecoration(
                       hintText: 'مثال: Chow6JbswIsSNRAol8T3',
-                      hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-                      prefixIcon: const Icon(Icons.account_box_rounded, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                      prefixIcon: const Icon(Icons.badge_rounded, color: Color(0xFF64748B), size: 20),
+                      filled: true,
+                      fillColor: const Color(0xFF0F172A),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF334155))),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF3B82F6))),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'يرجى إدخال كود الحساب أو البريد الإلكتروني المعتمد.';
+                        return 'يرجى إدخال معرف الحساب الصريح الخاص بك.';
                       }
                       return null;
                     },
@@ -196,35 +190,40 @@ class _LoginPageState extends State<LoginPage> {
                   
                   const Text(
                     'كلمة المرور الشخصية',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF334155)),
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFCBD5E1)),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
+                    style: const TextStyle(color: Colors.white),
                     textDirection: TextDirection.ltr,
                     decoration: InputDecoration(
                       hintText: '••••••••',
-                      prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
+                      hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                      prefixIcon: const Icon(Icons.lock_outline_rounded, color: Color(0xFF64748B), size: 20),
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
                             _obscurePassword = !_obscurePassword;
                           });
                         },
-                        icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20),
+                        icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: const Color(0xFF64748B), size: 20),
                       ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: const Color(0xFF0F172A),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF334155))),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF3B82F6))),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'يرجى إدخال كلمة المرور الخاصة بك.';
+                        return 'يرجى إدخال كلمة المرور المعتمدة.';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
                   
                   SizedBox(
                     width: double.infinity,
@@ -232,194 +231,23 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: const Color(0xFF3B82F6),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         elevation: 0,
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : const Text(
-                              'تسجيل الدخول وعرض حساب المحفظة',
+                              'تسجيل الدخول ومزامنة البيانات الميدانية',
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        widget.isFirebaseReady ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
-                        color: widget.isFirebaseReady ? Colors.green : Colors.red,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        widget.isFirebaseReady ? "اتصال الفايربيس نشط ومستقر" : "الفايربيس غير متصل",
-                        style: TextStyle(fontSize: 11, color: widget.isFirebaseReady ? Colors.green[700] : Colors.red[700]),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class DriverDashboardPage extends StatelessWidget {
-  final String employeeId;
-  final Map<String, dynamic> employeeData;
-
-  const DriverDashboardPage({
-    super.key,
-    required this.employeeId,
-    required this.employeeData,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final String employeeName = employeeData['name'] ?? 'موظف مبيعات';
-    final String employeeCode = employeeData['employeeCode'] ?? 'غير متوفر';
-    final String role = employeeData['role'] ?? 'salesAgent';
-    
-    final double baseSalary = (employeeData['baseSalary'] ?? employeeData['base_salary'] ?? 0).toDouble();
-    final double dailyWage = (employeeData['dailyWage'] ?? 0).toDouble();
-    final double commissionPercentage = (employeeData['commissionPercentage'] ?? 0).toDouble();
-    final double monthlyTarget = (employeeData['monthlyTarget'] ?? employeeData['monthly_target'] ?? 0).toDouble();
-    final double totalSalesThisMonth = (employeeData['totalSalesThisMonth'] ?? employeeData['total_sales_this_month'] ?? 0).toDouble();
-    final double advancesDrawn = (employeeData['advancesDrawn'] ?? employeeData['advances_drawn'] ?? 0).toDouble();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('المحفظة والحسابات المالية المباشرة', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF0F172A))),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(builder: (context) => const LoginPage(isFirebaseReady: true))
-              );
-            },
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          employeeName,
-                          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'كود الموظف: $employeeCode',
-                          style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                        ),
-                        Text(
-                          'Document ID: $employeeId',
-                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 12, fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        role == 'salesAgent' ? 'مندوب مبيعات' : 'مدير تشغيل',
-                        style: const TextStyle(color: Color(0xFF60A5FA), fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              const Text(
-                'كافة تفاصيل حقول السجل المالي الصريح لقاعدة البيانات:',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
-              ),
-              const SizedBox(height: 16),
-              
-              GridView.count(
-                crossAxisCount: MediaQuery.of(context).size.width < 800 ? 1 : 2,
-                shrinkWrap: true,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 12,
-                childAspectRatio: 4.5,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _buildFinancialRowItem('إجمالي مبيعات الشهر (totalSalesThisMonth)', '$totalSalesThisMonth ج.م', Icons.trending_up_rounded, const Color(0xFF10B981)),
-                  _buildFinancialRowItem('السلفيات والمبالغ المسحوبة (advancesDrawn)', '$advancesDrawn ج.م', Icons.money_off_rounded, const Color(0xFFEF4444)),
-                  _buildFinancialRowItem('المرتب الأساسي الثابت (baseSalary)', '$baseSalary ج.م', Icons.account_balance_wallet_rounded, const Color(0xFF2563EB)),
-                  _buildFinancialRowItem('الأجر اليومي المعتمد (dailyWage)', '$dailyWage ج.م', Icons.calendar_view_day_rounded, const Color(0xFF475569)),
-                  _buildFinancialRowItem('نسبة عمولة المبيعات (commissionPercentage)', '$commissionPercentage %', Icons.percent_rounded, const Color(0xFFF59E0B)),
-                  _buildFinancialRowItem('المستهدف المالي المطلوب (monthlyTarget)', '$monthlyTarget ج.م', Icons.track_changes_rounded, const Color(0xFF8B5CF6)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFinancialRowItem(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w500)),
-                const SizedBox(height: 2),
-                Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
