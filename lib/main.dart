@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'auth/login.dart'; // استدعاء شاشة الدخول المستقلة الجديدة مباشرة من مجلد الـ auth
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   bool isFirebaseReady = false;
   try {
-    // محاولة بدء تشغيل الفايربيس للتحقق من الملفات
+    // محاولة بدء تشغيل الفايربيس المباشر للتحقق من الاتصال وقواعد البيانات
     await Firebase.initializeApp();
     isFirebaseReady = true;
   } catch (e) {
@@ -25,36 +26,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Elhana Sales App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('فحص اتصال الفايربيس'),
-          backgroundColor: Colors.blueAccent,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isFirebaseReady ? Icons.check_circle : Icons.error,
-                color: isFirebaseReady ? Colors.green : Colors.red,
-                size: 80,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                isFirebaseReady 
-                    ? "تم الاتصال بـ Firebase بنجاح! 🚀" 
-                    : "فشل الاتصال.. تأكد من الإعدادات ❌",
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Package: com.elhana_sales",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
+      theme: ThemeData(
+        fontFamily: 'Segoe UI',
+        primaryColor: const Color(0xFF2563EB),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
       ),
+      // توجيه التطبيق لعرض صفحة الدخول المباشرة فوراً مع تمرير حالة الاتصال
+      home: LoginPage(isFirebaseReady: isFirebaseReady),
     );
   }
 }
