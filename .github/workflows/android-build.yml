@@ -28,5 +28,13 @@ jobs:
     - name: Install Dependencies
       run: flutter pub get
 
+    # قمنا بتغيير البناء إلى --release لتجربة النسخة الفعلية أو يمكنك إبقاؤها --debug حسب رغبتك
     - name: Build APK (Check Firebase & Gradle Sync)
-      run: flutter build apk --debug
+      run: flutter build apk --release
+
+    # الخطوة الإضافية الهامة لرفع النسخة إلى الأرشيف (Artifact) لإمكانية التحميل المباشر
+    - name: Upload APK to GitHub Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
